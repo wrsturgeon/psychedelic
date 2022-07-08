@@ -12,4 +12,4 @@ jobs:
     - name: Dependencies (Ubuntu)
       run: sudo apt-get install -y libopencv-dev lldb
     - name: Test (Ubuntu)
-      run: ./test.sh
+      run: ./test.sh debug
