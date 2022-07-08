@@ -10,7 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Dependencies
-      run: sudo apt-get install libopencv-dev valgrind
+      run: |
+        sudo apt-get install libopencv-dev valgrind
+        wget https://upload.wikimedia.org/wikipedia/commons/3/31/Moire_pattern_of_bricks.jpg -o images/alias_bricks.jpg
     # - name: Test
     #   run: ./test.sh
     - name: Build
