@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
   cv::Mat const src{cv::imread(argv[1])};
   ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
   ImageColMajor cm{util::col_major(rm)};
-  util::write(cm, "images/poop.png");
-  // util::write(conv::gauss_half(cm), "shit.png");
+  util::write(cm, "images/test_out.png");
+  // util::write(conv::gauss_half(cm), "images/gauss.png");
   return 0;
 }
