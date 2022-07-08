@@ -2,9 +2,10 @@
 !*.*
 !*/
 !.git*
+!LICENSE
 .vscode/
 .DS_Store
-*.png
-*.jpg
+images/
 bin/
 src/gauss_kernel.hpp
+*.log

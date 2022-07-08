@@ -1,0 +1,15 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  Ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Dependencies (Ubuntu)
+      run: sudo apt-get install libopencv-dev valgrind
+    - name: Test (Ubuntu)
+      run: ./test.sh
