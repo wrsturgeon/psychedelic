@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -z "${1}" ]; then echo "Call compile.sh like so: ./compile.sh <executable-name> [debug]"; exit 1; fi
+if [ -z "${1}" ]; then echo "Call ${0} like so: ${0} <executable-name> [debug]"; exit 1; fi
 
 EXECUTABLE=bin/${1}
 
@@ -10,11 +10,13 @@ clang -o gauss_kernel_compute src/gauss_kernel_compute.c
 ./gauss_kernel_compute 0.7071067812
 rm gauss_kernel_compute
 
+git submodule update --init --recursive
+
 # Compile
 if [ ! -f ${EXECUTABLE} ]; then
   echo "Compiling..."
 
-  DEPENDENCIES="opencv eigen llvm"
+  DEPENDENCIES="opencv llvm" # Eigen included as a submodule
 
   # Find dependencies
   COMPILER_FLAGS=
@@ -36,7 +38,7 @@ if [ ! -f ${EXECUTABLE} ]; then
   else
     ARGS="-Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine"
   fi
-  clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions ${COMPILER_FLAGS}
+  clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen ${COMPILER_FLAGS}
   echo "Compiled successfully!"
 fi
 
@@ -45,5 +47,5 @@ if [ "${2}" = "debug" ]; then
   lldb ${EXECUTABLE} -s lldb_cmd
   rm lldb_cmd
 else
-  bin/lsd_visuals
+  bin/${1}
 fi
