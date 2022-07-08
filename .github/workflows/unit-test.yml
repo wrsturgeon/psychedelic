@@ -18,6 +18,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Dependencies (Mac)
-      run: ls -a ~; exit 1; brew install opencv llvm; alias clang
+      run: brew install opencv llvm; echo 'alias clang++="/usr/local/opt/llvm/bin/clang++"' >> ~/.bash_profile; source ~/.bash_profile
     - name: Test (Mac)
       run: ./test.sh
