@@ -29,7 +29,7 @@ if [ ! -f ${EXECUTABLE} ]; then
 fi
 
 if [ "${3}" = "debug" ]; then
-  lldb bin/${1} --batch -o run\ ${2}
+  lldb bin/${1} --batch -o run\ ${2} -k thread\ backtrace -k q\ 1
 else
   bin/${1} ${2}
 fi
