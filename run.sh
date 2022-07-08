@@ -28,10 +28,8 @@ if [ ! -f ${EXECUTABLE} ]; then
   echo "Compiled successfully!"
 fi
 
-if [ "${2}" = "debug" ]; then
-  echo -e "run\nq\n" > lldb.script
-  lldb bin/${1} -s lldb.script
-  rm lldb.script
+if [ "${3}" = "debug" ]; then
+  lldb bin/${1} --batch -o run\ ${2} -k thread\ backtrace -k q\ 1
 else
   bin/${1} ${2}
 fi
