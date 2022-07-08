@@ -15,7 +15,7 @@ namespace conv {
 
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 Eigen::TensorFixedSize<dtype, Eigen::Sizes<(h >> 1), (w >> 1), c>, Eigen::ColMajor, index_t> gauss_half(
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::ColMajor, index_t> const& src) {
   static constexpr index_t hh = h >> 1;
