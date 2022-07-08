@@ -14,8 +14,12 @@ typedef Eigen::TensorFixedSize<uint8_t, kImageSize, Eigen::ColMajor, kIndexType>
 
 
 
-int main() {
-  cv::Mat const src = cv::imread("images/alias_bricks.jpg");
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cerr << "Usage: `" << argv[0] << " <image-path>`\n";
+    return 1;
+  }
+  cv::Mat const src{cv::imread(argv[1])};
   ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
   ImageColMajor cm{util::col_major(rm)};
   util::write(cm, "images/poop.png");
