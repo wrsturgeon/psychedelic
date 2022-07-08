@@ -18,7 +18,7 @@ int main() {
   cv::Mat const src = cv::imread("images/alias_bricks.jpg");
   ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
   ImageColMajor cm{util::col_major(rm)};
-  util::write(cm, "poop.png");
+  util::write(cm, "images/poop.png");
   // util::write(conv::gauss_half(cm), "shit.png");
   return 0;
 }

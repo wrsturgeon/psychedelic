@@ -20,10 +20,7 @@ if [ ! -f ${EXECUTABLE} ]; then
 
   # Find dependencies
   COMPILER_FLAGS=
-  # brew upgrade
-  # brew cleanup
   for dep in ${DEPENDENCIES}; do
-    # (brew upgrade ${dep} && brew cleanup ${dep}) || brew install ${dep}
     set +e; PC_PATH=$(find /usr -name ${dep}*.pc -print -quit 2>/dev/null); set -e
     if [ ! -z "${PC_PATH}" ]; then
       COMPILER_FLAGS="${COMPILER_FLAGS} $(pkg-config --cflags --libs ${PC_PATH})"
