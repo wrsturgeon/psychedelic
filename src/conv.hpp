@@ -38,14 +38,21 @@ Eigen::TensorFixedSize<dtype, Eigen::Sizes<((h - 2) >> 1), ((w - 2) >> 1), c>, E
   static constexpr a3 shape_y2{h - 2, w, c};
   static constexpr a3 stride_y{2, 1, 1};
   // static constexpr a3 stride_x{1, 2, 1};
-  static constexpr Eigen::array<Eigen::IndexPair<index_t>, 1> prod_dim{Eigen::IndexPair<index_t>(1, 0)};
-  Eigen::TensorFixedSize<dtype, Eigen::Sizes<(hh), w, c>, Eigen::ColMajor, index_t> vertical = (src
-    .extract_patches(patch_y)   // <(h-2)*w*c, 3, 1, 1>
-    .reshape(shape_y1)          // <(h-2)*w*c, 3>
-    .contract(kernel, prod_dim) // <(h-2)*w*c, 1>
-    .reshape(shape_y2)          // <h-2, w, c>
-    .stride(stride_y)           // <hh, w, c>
-  );
+  static constexpr Eigen::array<Eigen::IndexPair<index_t>, 1> mmul{{Eigen::IndexPair<index_t>(1, 0)}};
+  // Eigen::TensorFixedSize<dtype, Eigen::Sizes<(hh), w, c>, Eigen::ColMajor, index_t> vertical = (src
+  //   .extract_patches(patch_y) // <(h-2)*w*c, 3, 1, 1>
+  //   .reshape(shape_y1)        // <(h-2)*w*c, 3>
+  //   .contract(kernel, mmul)   // <(h-2)*w*c, 1>
+  //   .reshape(shape_y2)        // <h-2, w, c>
+  //   .stride(stride_y)         // <hh, w, c>
+  // );
+  auto _a = src;
+  auto _b = _a.extract_patches(patch_y);  // <(h-2)*w*c, 3, 1, 1>
+  auto _c = _b.reshape(shape_y1);         // <(h-2)*w*c, 3>
+  auto _d = _c.contract(kernel, mmul);    // <(h-2)*w*c, 1>
+  auto _e = _d.reshape(shape_y2);         // <h-2, w, c>
+  auto _f = _e.stride(stride_y);          // <hh, w, c>
+  Eigen::TensorFixedSize<dtype, Eigen::Sizes<(hh), w, c>, Eigen::ColMajor, index_t> vertical = _f;
   util::write(vertical, "vertical.png");
   return {};
 }
