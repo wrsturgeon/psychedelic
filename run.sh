@@ -43,7 +43,7 @@ if [ "${2}" = "debug" ]; then
   if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
     G_SLICE=always-malloc
     G_DEBUG=gc-friendly
-    valgrind -v --tool=memcheck --leak-check=full --num-callers=40 --log-file=valgrind.log bin/psychedelic
+    valgrind -v --tool=memcheck --leak-check=full --num-callers=40 --log-file=valgrind.log bin/${1}
   elif [[ "${OSTYPE}" == "darwin"* ]]; then
     leaks -atExit -- bin/${1}
   elif [[ "${OSTYPE}" == "msys" ]]; then
