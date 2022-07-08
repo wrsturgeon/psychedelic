@@ -6,7 +6,7 @@ if [ -z "${1}" ]; then echo "Call ${0} like so: ${0} <executable-name> [debug]";
 
 EXECUTABLE=bin/${1}
 
-clang -o gauss_kernel_compute src/gauss_kernel_compute.c
+clang -o gauss_kernel_compute src/gauss_kernel_compute.c -lm
 ./gauss_kernel_compute 0.7071067812
 rm gauss_kernel_compute
 
