@@ -40,17 +40,9 @@ if [ ! -f ${EXECUTABLE} ]; then
 fi
 
 if [ "${2}" = "debug" ]; then
-  if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
-    G_SLICE=always-malloc
-    G_DEBUG=gc-friendly
-    valgrind -v --tool=memcheck --leak-check=full --num-callers=40 bin/${1}
-  elif [[ "${OSTYPE}" == "darwin"* ]]; then
-    leaks -atExit -- bin/${1}
-  elif [[ "${OSTYPE}" == "msys" ]]; then
-    echo "Go fuck yourself"; exit 1
-  else
-    echo 'Unrecognized OS "${OSTYPE}"'; exit 1
-  fi
+  echo -e "run\nq\n" > lldb.script
+  lldb bin/${1} -s lldb.script
+  rm lldb.script
 else
   bin/${1}
 fi
