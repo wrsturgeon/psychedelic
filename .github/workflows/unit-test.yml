@@ -13,11 +13,3 @@ jobs:
       run: sudo apt-get install libopencv-dev valgrind
     - name: Test (Ubuntu)
       run: ./test.sh
-  Mac:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Dependencies (Mac)
-      run: find -L /usr -executable -type f -name clang++ 2>/dev/null | xargs readlink -f; which clang++ | xargs readlink -f; exit 1; brew install opencv llvm; echo 'alias clang++="/usr/local/opt/llvm/bin/clang++"' >> ~/.bash_profile; source ~/.bash_profile; which clang++ | xargs readlink -f
-    - name: Test (Mac)
-      run: ./test.sh
