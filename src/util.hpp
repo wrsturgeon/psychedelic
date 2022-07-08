@@ -18,7 +18,7 @@ namespace util {
 
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, !layout, index_t> memory_transpose(
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src) {
   typedef Eigen::TensorFixedSize<dtype, Eigen::Sizes<c, w, h>, layout, index_t> Confused; // TODO @wrsturgeon: TensorMap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,7 +27,7 @@ const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, !layout, index_t> mem
 }
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::RowMajor, index_t> row_major(
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src) {
   if constexpr (layout == Eigen::RowMajor) { return MOVE(src); }
@@ -35,7 +35,7 @@ const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::RowMajor, inde
 }
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::ColMajor, index_t> col_major(
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src) {
   if constexpr (layout == Eigen::ColMajor) { return MOVE(src); }
@@ -45,7 +45,7 @@ const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::ColMajor, inde
 
 
 template <typename dtype = kDefaultImageType>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 Eigen::TensorMap<Eigen::Tensor<dtype, 3, Eigen::RowMajor, kIndexType>> wrap(cv::Mat const& src) {
   CV_CheckTypeEQ(src.type(), CV_MAKETYPE(cv::traits::Type<dtype>::value, src.channels()), "util::wrap dtype != src dtype");
   return MOVE(Eigen::TensorMap<Eigen::Tensor<dtype, 3, Eigen::RowMajor, kIndexType>>(
@@ -53,7 +53,7 @@ Eigen::TensorMap<Eigen::Tensor<dtype, 3, Eigen::RowMajor, kIndexType>> wrap(cv::
 }
 
 template <kIndexType h, kIndexType w, kIndexType c = 3, typename dtype = kDefaultImageType>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 Eigen::TensorMap<Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::RowMajor, kIndexType>> wrap(cv::Mat const& src) {
   CV_CheckTypeEQ(src.type(), CV_MAKETYPE(cv::traits::Type<dtype>::value, src.channels()), "util::wrap dtype != src dtype");
   if (h != src.rows) { throw std::runtime_error("util::wrap passed inconsistent height"); }
@@ -66,7 +66,7 @@ Eigen::TensorMap<Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::Row
 
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
-EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+EIGEN_DEVICE_FUNC INLINE
 void write(Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src, std::string const& path) {
   cv::imwrite(path, cv::Mat(static_cast<int>(h), static_cast<int>(w),
         static_cast<int>(CV_MAKETYPE(cv::DataType<dtype>::type, c)),
@@ -75,7 +75,7 @@ void write(Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t>
 }
 
 // template <typename dtype, typename index_t, int layout>
-// EIGEN_DEVICE_FUNC EIGEN_ALWAYS_INLINE
+// EIGEN_DEVICE_FUNC INLINE
 // void write(Eigen::Tensor<dtype, 3, Eigen::RowMajor, index_t> const& src, std::string const& path) {
 //   write<dtype, index_t, src.dimension(0), src.dimension(1), src.dimension(2), layout>(src, path);
 // }

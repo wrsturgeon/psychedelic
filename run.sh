@@ -31,9 +31,9 @@ if [ ! -f ${EXECUTABLE} ]; then
 
   mkdir -p bin
   if [ "${2}" = "debug" ]; then
-    ARGS="-g -O0"
+    ARGS='-DINLINE= -g -O0'
   else
-    ARGS="-Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine"
+    ARGS='-DINLINE=EIGEN_ALWAYS_INLINE -Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine'
   fi
   clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen ${COMPILER_FLAGS}
   echo "Compiled successfully!"
