@@ -34,7 +34,7 @@ if [ ! -f ${EXECUTABLE} ]; then
 
   mkdir -p bin
   if [ "${2}" = "debug" ]; then
-    ARGS="-g -O0 -DEXECNAME=${1}"
+    ARGS="-g -O0"
   else
     ARGS="-Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine"
   fi
@@ -43,9 +43,17 @@ if [ ! -f ${EXECUTABLE} ]; then
 fi
 
 if [ "${2}" = "debug" ]; then
-  echo -e "run\nthread backtrace\nq\n" > lldb_cmd
-  lldb ${EXECUTABLE} -s lldb_cmd
-  rm lldb_cmd
+  if [[ "${OSTYPE}" == "linux-gnu"* ]]; then
+    G_SLICE=always-malloc
+    G_DEBUG=gc-friendly
+    valgrind -v --tool=memcheck --leak-check=full --num-callers=40 --log-file=valgrind.log bin/psychedelic
+  elif [[ "${OSTYPE}" == "darwin"* ]]; then
+    leaks -atExit -- bin/${1}
+  elif [[ "${OSTYPE}" == "msys" ]]; then
+    echo "Go fuck yourself"; exit 1
+  else
+    echo 'Unrecognized OS "${OSTYPE}"'; exit 1
+  fi
 else
   bin/${1}
 fi

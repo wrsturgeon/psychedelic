@@ -19,9 +19,6 @@ int main() {
   ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
   ImageColMajor cm{util::col_major(rm)};
   util::write(cm, "poop.png");
-  util::write(conv::gauss_half(cm), "shit.png");
-  #ifdef EXECNAME
-  system("leaks " STR(EXECNAME));
-  #endif
+  // util::write(conv::gauss_half(cm), "shit.png");
   return 0;
 }
