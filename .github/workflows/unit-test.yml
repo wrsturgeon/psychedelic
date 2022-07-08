@@ -10,6 +10,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Dependencies (Ubuntu)
-      run: sudo apt-get install -y libopencv-dev lldb
+      run: sudo apt-get install -y libopencv-dev lldb imagemagick
     - name: Test (Ubuntu)
       run: ./test.sh debug
