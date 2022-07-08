@@ -20,9 +20,11 @@ Eigen::TensorFixedSize<dtype, Eigen::Sizes<(h >> 1), (w >> 1), c>, Eigen::ColMaj
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::ColMajor, index_t> const& src) {
   static constexpr index_t hh = h >> 1;
   // static constexpr index_t hw = w >> 1;
-  static constexpr size_t dbits = sizeof(dtype) << 3;
-  static constexpr dtype _w_c = gauss::kCenter * (1 << dbits) + 0.5;
-  static constexpr dtype _w_p = gauss::kCenter * (1 << dbits) + 0.5;
+  static constexpr bool is_float = std::is_floating_point<dtype>::value;
+  static constexpr size_t dbits = is_float ? 0 : sizeof(dtype) << 3;
+  // Would love to use ldexp but not constexpr :_(
+  static constexpr dtype _w_c = is_float ? gauss::kCenter : gauss::kCenter * (1 << dbits) + 0.5;
+  static constexpr dtype _w_p = is_float ? gauss::kPeriph : gauss::kPeriph * (1 << dbits) + 0.5;
 
   // Vertical convolution
   Eigen::TensorFixedSize<dtype, Eigen::Sizes<hh, w, c>, Eigen::ColMajor, index_t> tmp;
