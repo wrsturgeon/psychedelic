@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e
-
 if [ -z "${1}" ]; then echo "Call ${0} like so: ${0} <executable-name> [debug]"; exit 1; fi
+
+set -ex
 
 EXECUTABLE=bin/${1}
 
