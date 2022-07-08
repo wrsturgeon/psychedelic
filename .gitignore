@@ -8,3 +8,4 @@
 images/
 bin/
 src/gauss_kernel.hpp
+*.log

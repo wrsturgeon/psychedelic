@@ -35,9 +35,7 @@ if [ ! -f ${EXECUTABLE} ]; then
   else
     ARGS="-Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine"
   fi
-  set -x
   clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen ${COMPILER_FLAGS}
-  set +x
   echo "Compiled successfully!"
 fi
 
