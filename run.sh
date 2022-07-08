@@ -47,5 +47,5 @@ if [ "${2}" = "debug" ]; then
   lldb ${EXECUTABLE} -s lldb_cmd
   rm lldb_cmd
 else
-  bin/lsd_visuals
+  bin/${1}
 fi
