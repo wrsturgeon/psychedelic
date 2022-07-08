@@ -16,14 +16,14 @@ git submodule update --init --recursive
 if [ ! -f ${EXECUTABLE} ]; then
   echo "Compiling..."
 
-  DEPENDENCIES="opencv llvm" # Eigen included as a submodule
+  DEPENDENCIES="opencv4" # Eigen included as a submodule
 
   # Find dependencies
   COMPILER_FLAGS=
   for dep in ${DEPENDENCIES}; do
-    set +e; PC_PATH=$(find /usr -name ${dep}*.pc -print -quit 2>/dev/null); set -e
-    if [ ! -z "${PC_PATH}" ]; then
-      COMPILER_FLAGS="${COMPILER_FLAGS} $(pkg-config --cflags --libs ${PC_PATH})"
+    if INCLUDES_AND_LIBS=$(pkg-config --cflags --libs ${dep} 2>/dev/null); then
+      echo "Found ${dep}"
+      COMPILER_FLAGS="${COMPILER_FLAGS} ${INCLUDES_AND_LIBS}"
     else
       echo "No includes or libraries found for ${dep}"
     fi
@@ -35,7 +35,9 @@ if [ ! -f ${EXECUTABLE} ]; then
   else
     ARGS="-Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine"
   fi
+  set -x
   clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen ${COMPILER_FLAGS}
+  set +x
   echo "Compiled successfully!"
 fi
 
