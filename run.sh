@@ -2,7 +2,7 @@
 
 set -e
 
-if [ -z "${1}" ]; then echo "Call compile.sh like so: ./compile.sh <executable-name> [debug]"; exit 1; fi
+if [ -z "${1}" ]; then echo "Call ${0} like so: ${0} <executable-name> [debug]"; exit 1; fi
 
 EXECUTABLE=bin/${1}
 
