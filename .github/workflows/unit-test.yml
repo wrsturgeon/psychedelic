@@ -12,4 +12,4 @@ jobs:
     # - name: Test
     #   run: ./test.sh
     - name: Build
-      run: ./run.sh
+      run: ./run.sh psychedelic
