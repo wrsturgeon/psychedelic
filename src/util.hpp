@@ -20,11 +20,22 @@ namespace util {
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
 EIGEN_DEVICE_FUNC INLINE
 const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, !layout, index_t> memory_transpose(
-      Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src) {
+      Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>,  layout, index_t> const& src) {
   typedef Eigen::TensorFixedSize<dtype, Eigen::Sizes<c, w, h>, layout, index_t> Confused; // TODO @wrsturgeon: TensorMap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   static constexpr Eigen::array<index_t, 3> shuffler{2, 1, 0};
   return MOVE(Eigen::TensorLayoutSwapOp<Confused>(Confused(src.shuffle(shuffler))));
 }
+
+template <typename dtype, typename index_t, int layout>
+EIGEN_DEVICE_FUNC INLINE
+const Eigen::Tensor<dtype, 3, !layout, index_t> memory_transpose(
+      Eigen::Tensor<dtype, 3,  layout, index_t> const& src) {
+  typedef Eigen::Tensor<dtype, 3, layout, index_t> Confused; // TODO @wrsturgeon: TensorMap %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  static constexpr Eigen::array<index_t, 3> shuffler{2, 1, 0};
+  return MOVE(Eigen::TensorLayoutSwapOp<Confused>(Confused(src.shuffle(shuffler))));
+}
+
+
 
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
 EIGEN_DEVICE_FUNC INLINE
@@ -34,10 +45,28 @@ const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::RowMajor, inde
   return MOVE(memory_transpose(src));
 }
 
+template <typename dtype, typename index_t, int layout>
+EIGEN_DEVICE_FUNC INLINE
+const Eigen::Tensor<dtype, 3, Eigen::RowMajor, index_t> row_major(
+      Eigen::Tensor<dtype, 3, layout, index_t> const& src) {
+  if constexpr (layout == Eigen::RowMajor) { return MOVE(src); }
+  return MOVE(memory_transpose(src));
+}
+
+
+
 template <typename dtype, typename index_t, index_t h, index_t w, index_t c, int layout>
 EIGEN_DEVICE_FUNC INLINE
 const Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, Eigen::ColMajor, index_t> col_major(
       Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t> const& src) {
+  if constexpr (layout == Eigen::ColMajor) { return MOVE(src); }
+  return MOVE(memory_transpose(src));
+}
+
+template <typename dtype, typename index_t, int layout>
+EIGEN_DEVICE_FUNC INLINE
+const Eigen::Tensor<dtype, 3, Eigen::ColMajor, index_t> col_major(
+      Eigen::Tensor<dtype, 3, layout, index_t> const& src) {
   if constexpr (layout == Eigen::ColMajor) { return MOVE(src); }
   return MOVE(memory_transpose(src));
 }
@@ -74,11 +103,14 @@ void write(Eigen::TensorFixedSize<dtype, Eigen::Sizes<h, w, c>, layout, index_t>
         static_cast<size_t>(0)));
 }
 
-// template <typename dtype, typename index_t, int layout>
-// EIGEN_DEVICE_FUNC INLINE
-// void write(Eigen::Tensor<dtype, 3, Eigen::RowMajor, index_t> const& src, std::string const& path) {
-//   write<dtype, index_t, src.dimension(0), src.dimension(1), src.dimension(2), layout>(src, path);
-// }
+template <typename dtype, typename index_t>
+EIGEN_DEVICE_FUNC INLINE
+void write(Eigen::Tensor<dtype, 3, Eigen::ColMajor, index_t> const& src, std::string const& path) {
+  cv::imwrite(path, cv::Mat(src.dimension(0), src.dimension(1),
+        static_cast<int>(CV_MAKETYPE(cv::DataType<dtype>::type, src.dimension(2))),
+        const_cast<void*>(static_cast<void const*>(row_major(src).data())),
+        static_cast<size_t>(0)));
+}
 
 
 
