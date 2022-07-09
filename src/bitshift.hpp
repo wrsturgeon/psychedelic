@@ -1,29 +1,23 @@
 #ifndef BITSHIFT_HPP_
 #define BITSHIFT_HPP_
 
-#include <unsupported/Eigen/CXX11/TensorSymmetry>
+#include <Eigen/Core>
 
 
 
-struct scalar_rshift_op : Eigen::internal::binary_op_base<int16_t, uint8_t> {
+struct scalar_promote_op : Eigen::internal::binary_op_base<int16_t, uint8_t> {
   typedef uint8_t result_type;
 #ifdef EIGEN_SCALAR_BINARY_OP_PLUGIN
-  scalar_rshift_op() {
+  scalar_promote_op() {
     EIGEN_SCALAR_BINARY_OP_PLUGIN
   }
 #endif
-  EIGEN_DEVICE_FUNC INLINE result_type operator() (const int16_t& a, uint8_t b) const { return a >> b; }
-  // template<typename Packet>
-  // EIGEN_DEVICE_FUNC INLINE Packet packetOp(const Packet& a, const Packet& b) const
-  // { return internal::padd(a,b); }
-  // template<typename Packet>
-  // EIGEN_DEVICE_FUNC INLINE dtype predux(const Packet& a) const
-  // { return internal::predux(a); }
+  EIGEN_DEVICE_FUNC INLINE result_type operator()(int16_t a, uint8_t bits) const { return a >> bits; }
 };
 
 // From scalar_sum_op
 template <>
-struct Eigen::internal::functor_traits<scalar_rshift_op> {
+struct Eigen::internal::functor_traits<scalar_promote_op> {
   enum {
     Cost = (int(NumTraits<int16_t>::AddCost) + int(NumTraits<uint8_t>::AddCost)) >> 1,
     PacketAccess = false
@@ -32,18 +26,24 @@ struct Eigen::internal::functor_traits<scalar_rshift_op> {
 
 
 
-// EIGEN_DEVICE_FUNC
-// INLINE const TensorCwiseUnaryOp<internal::bind2nd_op<internal::scalar_sum_op<Scalar,Scalar>>, const Derived>
-// operator+ (Scalar rhs) const {
-//   return unaryExpr(internal::bind2nd_op<internal::scalar_sum_op<Scalar,Scalar>>(rhs));
-// }
+struct scalar_demote_op : Eigen::internal::binary_op_base<uint8_t, int16_t> {
+  typedef int16_t result_type;
+#ifdef EIGEN_SCALAR_BINARY_OP_PLUGIN
+  scalar_demote_op() {
+    EIGEN_SCALAR_BINARY_OP_PLUGIN
+  }
+#endif
+  EIGEN_DEVICE_FUNC INLINE result_type operator()(uint8_t a, uint8_t bits) const { return a << bits; }
+};
 
-template <typename Derived>
-EIGEN_DEVICE_FUNC INLINE
-Eigen::TensorCwiseUnaryOp<Eigen::internal::bind2nd_op<scalar_rshift_op>, Derived const> const operator>>(Eigen::TensorBase<Derived> const& a, uint8_t b) {
-  assert(b == 8);
-  return a.unaryExpr(Eigen::internal::bind2nd_op<scalar_rshift_op>(8));
-}
+// From scalar_sum_op
+template <>
+struct Eigen::internal::functor_traits<scalar_demote_op> {
+  enum {
+    Cost = (int(NumTraits<uint8_t>::AddCost) + int(NumTraits<int16_t>::AddCost)) >> 1,
+    PacketAccess = false
+  };
+};
 
 
 

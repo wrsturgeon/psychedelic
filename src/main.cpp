@@ -1,3 +1,6 @@
+#define EIGEN_TENSORBASE_PLUGIN "../src/tensorops.hpp"
+#include "bitshift.hpp"
+
 #include "util.hpp"
 #include "conv.hpp"
 
@@ -17,6 +20,7 @@ int main(int argc, char** argv) {
     std::cerr << "Usage: `" << argv[0] << " <src-image-path> <dst-image-path>`\n";
     return 1;
   }
+  Eigen::TensorFixedSize<int16_t, Eigen::Sizes<1>>().demote(8);
   cv::Mat const src{cv::imread(argv[1])};
   ImageRowMajor rm{util::wrap<IMAGE_H, IMAGE_W>(src)};
   ImageColMajor cm{util::col_major(rm)};
