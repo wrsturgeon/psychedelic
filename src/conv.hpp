@@ -8,6 +8,7 @@
 #include <unsupported/Eigen/CXX11/TensorSymmetry>
 
 #include "util.hpp"
+#include "bitshift.hpp"
 
 // Stupid fucking sqrt & erfc aren't constexpr >:(((
 #include "gauss_kernel.hpp"
@@ -23,8 +24,9 @@ Eigen::TensorFixedSize<uint8_t, Eigen::Sizes<((h - 2) >> 1), ((w - 2) >> 1), c>,
   static constexpr bool is_float = std::is_floating_point<uint8_t>::value;
   static constexpr size_t dbits = is_float ? 0 : sizeof(uint8_t) << 3;
   // Would love to use ldexp but not constexpr :_(
-  static constexpr uint8_t _w_p = is_float ? gauss::kPeriph : gauss::kPeriph * (1 << dbits) + 0.5;
-  static constexpr uint8_t _w_c = is_float ? gauss::kCenter : (1L << dbits) - (_w_p << 1); // Necessarily adds up to e.g. 256
+  static constexpr int16_t _w_p = is_float ? gauss::kPeriph : gauss::kPeriph * (1 << dbits) + 0.5;
+  static constexpr int16_t _w_c = is_float ? gauss::kCenter : gauss::kCenter * (1 << dbits) + 0.5;
+  // static constexpr int16_t _w_c = is_float ? gauss::kCenter : (1L << dbits) - (2 * _w_p); // Necessarily adds up to e.g. 256
 
   // // THIS WORKS
   // static constexpr Eigen::array<index_t, 3> stride{2, 2, 1};
@@ -32,7 +34,7 @@ Eigen::TensorFixedSize<uint8_t, Eigen::Sizes<((h - 2) >> 1), ((w - 2) >> 1), c>,
   // static constexpr Eigen::array<index_t, 3> girth{h - 2, w - 2, c};
   // return src.slice(start, girth).stride(stride);
 
-  typedef Eigen::TensorFixedSize<uint16_t, Eigen::Sizes<3>, Eigen::ColMajor, index_t> kernel_t;
+  typedef Eigen::TensorFixedSize<int16_t, Eigen::Sizes<3>, Eigen::ColMajor, index_t> kernel_t;
   static const kernel_t kernel{kernel_t().setValues({_w_p, _w_c, _w_p})};
   // typedef Eigen::TensorFixedSize<uint8_t, Eigen::Sizes<1>, Eigen::ColMajor, index_t> axis_t;
   // static const axis_t   vertical{axis_t().setConstant(0)};
@@ -47,9 +49,9 @@ Eigen::TensorFixedSize<uint8_t, Eigen::Sizes<((h - 2) >> 1), ((w - 2) >> 1), c>,
   Eigen::TensorFixedSize<uint8_t, Eigen::Sizes<h - 2, w, c>, Eigen::ColMajor, index_t> vertical{(src
     .extract_patches(patch_y)   // 3,1,1,(h-2)wc
     .reshape(shape_y1)          // 3,    (h-2)wc
-    .template cast<uint16_t>()
+    .template cast<int16_t>()
     .contract(kernel, trans)    // 1,    (h-2)wc
-    >> 8)
+    >> dbits)
     .template cast<uint8_t>()
     .reshape(shape_y2)          // h-2,w,c
   // //   .stride(stride_y)           // <hh, w, c>
