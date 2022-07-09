@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "${2}" ]; then echo "Call ${0} like so: ${0} <executable-name> <image-path> [debug]"; exit 1; fi
+if [ -z "${3}" ]; then echo "Usage: `${0} <executable> <src-image-path> <dst-image-path> [debug]`"; exit 1; fi
 
 set -ex
 
@@ -19,7 +19,7 @@ if [ ! -f ${EXECUTABLE} ]; then
   echo "Compiling..."
 
   mkdir -p bin
-  if [ "${3}" = "debug" ]; then
+  if [ "${4}" = "debug" ]; then
     ARGS='-DINLINE= -g -O0'
   else
     ARGS='-DINLINE=EIGEN_ALWAYS_INLINE -Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine'
@@ -28,8 +28,8 @@ if [ ! -f ${EXECUTABLE} ]; then
   echo "Compiled successfully!"
 fi
 
-if [ "${3}" = "debug" ]; then
-  lldb bin/${1} --batch -o run\ ${2} -k thread\ backtrace -k q\ 1
+if [ "${4}" = "debug" ]; then
+  lldb bin/${1} --batch -o run\ ${2}\ ${3} -k thread\ backtrace -k q\ 1
 else
-  bin/${1} ${2}
+  bin/${1} ${2} ${3}
 fi
