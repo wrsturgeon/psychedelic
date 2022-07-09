@@ -24,7 +24,7 @@ if [ ! -f ${EXECUTABLE} ]; then
   else
     ARGS='-DINLINE=EIGEN_ALWAYS_INLINE -Ofast -march=native -funit-at-a-time -mllvm -polly -mllvm -polly-vectorizer=stripmine'
   fi
-  clang++ src/main.cpp -o ${EXECUTABLE} ${ARGS} -DIMAGE_H=${IMAGE_H} -DIMAGE_W=${IMAGE_W} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen $(pkg-config --cflags --libs opencv4)
+  clang++ -std=c++17 src/main.cpp -o ${EXECUTABLE} ${ARGS} -DIMAGE_H=${IMAGE_H} -DIMAGE_W=${IMAGE_W} -pedantic -Wall -Wextra -Werror -Wno-c++17-extensions -Wno-c11-extensions -Wno-c99-extensions -Ieigen $(pkg-config --cflags --libs opencv4)
   echo "Compiled successfully!"
 fi
 

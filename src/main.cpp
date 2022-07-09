@@ -6,9 +6,7 @@
 
 
 
-static constexpr kIndexType kImageHeight = IMAGE_H;
-static constexpr kIndexType kImageWidth = IMAGE_W;
-typedef Eigen::Sizes<kImageHeight, kImageWidth, 3> kImageSize;
+typedef Eigen::Sizes<IMAGE_H, IMAGE_W, 3> kImageSize;
 typedef Eigen::TensorFixedSize<uint8_t, kImageSize, Eigen::RowMajor, kIndexType> ImageRowMajor;
 typedef Eigen::TensorFixedSize<uint8_t, kImageSize, Eigen::ColMajor, kIndexType> ImageColMajor;
 
@@ -20,9 +18,10 @@ int main(int argc, char** argv) {
     return 1;
   }
   cv::Mat const src{cv::imread(argv[1])};
-  ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
+  ImageRowMajor rm{util::wrap<IMAGE_H, IMAGE_W>(src)};
   ImageColMajor cm{util::col_major(rm)};
-  util::write(cm, argv[1]);
-  util::write(conv::gauss_half(cm), argv[2]);
+  auto poo = conv::gauss_half(cm);
+  // util::write(cm, argv[1]);
+  util::write(poo, argv[2]);
   return 0;
 }
