@@ -15,14 +15,14 @@ typedef Eigen::TensorFixedSize<uint8_t, kImageSize, Eigen::ColMajor, kIndexType>
 
 
 int main(int argc, char** argv) {
-  if (argc != 2) {
-    std::cerr << "Usage: `" << argv[0] << " <image-path>`\n";
+  if (argc != 3) {
+    std::cerr << "Usage: `" << argv[0] << " <src-image-path> <dst-image-path>`\n";
     return 1;
   }
   cv::Mat const src{cv::imread(argv[1])};
   ImageRowMajor rm{util::wrap<kImageHeight, kImageWidth>(src)};
   ImageColMajor cm{util::col_major(rm)};
-  util::write(cm, "images/test_out.png");
-  // util::write(conv::gauss_half(cm), "images/gauss.png");
+  util::write(cm, argv[1]);
+  // util::write(conv::gauss_half(cm), argv[2]);
   return 0;
 }
