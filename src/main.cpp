@@ -2,6 +2,9 @@
 #include "conv.hpp"
 
 #include <iostream>
+
+#include "bshiftops.hpp"
+#define EIGEN_TENSORBASE_PLUGIN tensorops.hpp
 #include <unsupported/Eigen/CXX11/TensorSymmetry>
 
 
