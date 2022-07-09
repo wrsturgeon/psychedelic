@@ -1,3 +1,6 @@
+#include "bitshift.hpp"
+#define EIGEN_TENSORBASE_PLUGIN "tensorops.hpp"
+
 #include "util.hpp"
 #include "conv.hpp"
 
