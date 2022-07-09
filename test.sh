@@ -14,7 +14,12 @@ wget https://upload.wikimedia.org/wikipedia/commons/3/31/Moire_pattern_of_bricks
 
 ./run.sh test_executable images/${IMAGE_I} images/${IMAGE_O} ${1} # ${1} to debug...if you're into that kind of thing
 
-if [ "$(identify images/${IMAGE_O} | cut -d' ' -f3)" != "310x377" ] ; then
-  echo "$(identify images/${IMAGE_O} | cut -d' ' -f3) =/= 310x377 = (622-2)/2 x (756-2)/2"
+if [ "$(identify images/${IMAGE_I} | cut -d' ' -f3)" != "622x756" ] ; then
+  echo "$(identify images/${IMAGE_I} | cut -d' ' -f3) =/= 622x756"
   exit 1
 fi
+
+# if [ "$(identify images/${IMAGE_O} | cut -d' ' -f3)" != "310x377" ] ; then
+#   echo "$(identify images/${IMAGE_O} | cut -d' ' -f3) =/= 310x377 = (622-2)/2 x (756-2)/2"
+#   exit 1
+# fi
