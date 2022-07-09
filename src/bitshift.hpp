@@ -1,7 +1,7 @@
 #ifndef BITSHIFT_HPP_
 #define BITSHIFT_HPP_
 
-#include <unsupported/Eigen/CXX11/TensorSymmetry>
+#include <Eigen/Core>
 
 
 
@@ -12,7 +12,7 @@ struct scalar_promote_op : Eigen::internal::binary_op_base<int16_t, uint8_t> {
     EIGEN_SCALAR_BINARY_OP_PLUGIN
   }
 #endif
-  EIGEN_DEVICE_FUNC INLINE result_type operator()(const int16_t& a) const { return a >> 8; } // Can't use CHAR_BIT since we'd need 2*CHAR_BIT
+  EIGEN_DEVICE_FUNC INLINE result_type operator()(int16_t a, uint8_t bits) const { return a >> bits; }
 };
 
 // From scalar_sum_op
@@ -33,7 +33,7 @@ struct scalar_demote_op : Eigen::internal::binary_op_base<uint8_t, int16_t> {
     EIGEN_SCALAR_BINARY_OP_PLUGIN
   }
 #endif
-  EIGEN_DEVICE_FUNC INLINE result_type operator()(const uint8_t& a) const { return a << 8; }
+  EIGEN_DEVICE_FUNC INLINE result_type operator()(uint8_t a, uint8_t bits) const { return a << bits; }
 };
 
 // From scalar_sum_op
