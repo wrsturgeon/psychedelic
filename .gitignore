@@ -6,6 +6,9 @@
 .vscode/
 .DS_Store
 images/
+*.png
+*.jpg
+*.jpeg
 bin/
 src/gauss_kernel.hpp
 *.log
